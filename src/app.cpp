@@ -1,6 +1,6 @@
 #include <pch.h>
 #include <Kiss/app.h>
-#include "fsmSemaphore.h"
+//#include "fsmSemaphore.h"
 #include <entt/entt.hpp>
 #include <Kore/Display.h>
 #include <Kiss/components/sprite.h>
@@ -25,7 +25,7 @@ namespace {
 	namespace win {
 		u32 w = 1280;
 		u32 h = 720;
-		f32 scale = 2.f;
+		f32 scale = 1.f;
 		f32 sw = (w / scale);
 		f32 sh = (h / scale);
 	}
