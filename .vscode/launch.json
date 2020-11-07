@@ -1,0 +1,99 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Project UWP",
+            "program": "${workspaceFolder:Kinc}/make.js",
+            "args": ["--to","Projects/UWP","--noshaders", "-t", "windowsapp"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Shaders UWP",
+            "program": "${workspaceFolder:Kinc}/make.js",
+            "args": ["--to","Projects/UWP","--onlyshaders", "-t", "windowsapp"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Project WindowsDx11",
+            "program": "${workspaceFolder:Kinc}/make.js",
+            "args": ["--to","Projects/WindowsDx11","--noshaders", "-g", "direct3d11"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Shaders WindowsDx11",
+            "program": "${workspaceFolder:Kinc}/make.js",
+            "args": ["--to","Projects/WindowsDx11","--onlyshaders", "-g", "direct3d11"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Project WindowsDx12",
+            "program": "${workspaceFolder:Kinc}/make.js",
+            "args": ["--to","Projects/WindowsDx12","--noshaders", "-g", "direct3d12"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Shaders WindowsDx12",
+            "program": "${workspaceFolder:Kinc}/make.js",
+            "args": ["--to","Projects/WindowsDx12","--onlyshaders", "-g", "direct3d12"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Project WindowsVulkan",
+            "program": "${workspaceFolder:Kinc}/make.js",
+            "args": ["--to","Projects/WindowsVk","--noshaders", "-g", "vulkan"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Shaders WindowsVulkan",
+            "program": "${workspaceFolder:Kinc}/make.js",
+            "args": ["--to","Projects/WindowsVk","--onlyshaders", "-g", "vulkan"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Project WindowsOpenGL",
+            "program": "${workspaceFolder:Kinc}/make.js",
+            "args": ["--to","Projects/WindowsGL","--noshaders", "-g", "opengl"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Shaders WindowsOpenGL",
+            "program": "${workspaceFolder:Kinc}/make.js",
+            "args": ["--to","Projects/WindowsGL","--onlyshaders", "-g", "opengl"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Project HTML5",
+            "program": "${workspaceFolder:Kinc}/make.js",
+            "args": ["--to","Build" ,"--noshaders", "-t", "html5"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Shaders HTML5",
+            "program": "${workspaceFolder:Kinc}/make.js",
+            "args": ["--to","Build" ,"--onlyshaders", "-t", "html5"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Android",
+            "program": "${workspaceFolder:Kinc}/make.js",
+            "args": ["--to","Projects/AndroidStudio", "-t", "android"]
+        }
+    ]
+}

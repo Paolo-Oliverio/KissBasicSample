@@ -1,0 +1,34 @@
+{
+	"folders": [
+		{
+			"name": "Project",
+			"path": "./"
+		},		
+		{
+			"name": "Kinc",
+			"path": "../../kinc/"
+		},
+		{
+			"name": "KincMake",
+			"path": "../../kinc/Tools/kincmake"
+		},
+		{
+			"name": "Engine",
+			"path": "../../engine"
+		},
+		{
+			"name": "Tools",
+			"path": "../../tools"
+		},
+		{
+			"name": "ThirdParty",
+			"path": "../../thirdparty/"
+		}
+	],
+	"settings": {
+		"files.autoSave": "afterDelay",
+		"files.exclude": {
+			"**/.git*" : true,
+		},
+	}
+}
