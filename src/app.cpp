@@ -17,11 +17,13 @@
 
 using namespace kiss;
 
-entt::registry registry;
-
-bool show_another_window = true;
-
 namespace {
+	entt::registry registry;
+
+	#ifdef KISS_IMGUI //imgui state
+		bool show_another_window = true;
+	#endif
+
 	namespace win {
 		u32 w = 1280;
 		u32 h = 720;
@@ -34,9 +36,10 @@ namespace {
 		id::spr::RectAnim1,
 		3//u8	 numFrames;
 	};
-	
-	entt::registry* entt_registry = nullptr;
-	gfx2d::command::buffer commandbuffer(new u8[512], 512);
+
+	constexpr int buffersize = 512;
+	u8 bufferData[buffersize];
+	gfx2d::command::buffer commandbuffer(bufferData, buffersize);
 }
 
 //Kore::Graphics2::Graphics2* g2;
@@ -56,11 +59,6 @@ namespace entities {
 			world.emplace<pos2d>(entity, pos);
 			world.emplace<vel2d>(entity, vel);
 			flipbook::play(world,entity, &Anims[0], options,math::Random::get(0,20) * 0.1f, s);
-			/*
-			//ecs.assign<targetFollow>(entity, targetFollow{ mysw / 2, mysh / 2, 8 });
-			if( i % 3 ){
-				ecs.assign<Time::Dilation>( entity,(float)Random::get( 200, 8000) / 2000.f );
-			}*/
 		}
 	}
 
@@ -128,14 +126,8 @@ void app::resize(int x, int y, void* data){
 
 void app::update(float dt) {
 	const aabb bounds(14, 32, win::sw - 10, win::sh);
-	//std::thread t1(ecs::move::step_in_aabb, std::ref(registry), dt, bounds );
-	//std::thread t2(ecs::system::UpdateFlipbooks, std::ref (registry), dt );
 	ecs::move::step_in_aabb(registry, dt, bounds);
 	ecs::system::UpdateFlipbooks(registry, dt);
-	//t1.join();
-	//t2.join();
-
-
 }
 
 
@@ -144,12 +136,10 @@ void app::render(float dt) {
 	gx::scissor(0, 0, win::w, win::h);
 	gx::clear(gx::ClearColorFlag,0xFF808080);
 	//gx::clear(gx::ClearColorFlag, iColor((u8)math::Random::get(40, 255), (u8)math::Random::get(40, 255), (u8)math::Random::get(40, 255)));
-	//gx::viewport(0, -win::sh, win::w, win::h);
-	//gx::clear(gx::ClearColorFlag, iColor((u8)math::Random::get(40, 100), (u8)math::Random::get(40, 100), (u8)math::Random::get(40, 100)));
+
 	//g2->begin(false, -1, -1, false);
 	//g2->fillRect(0, 0, 1024, 512);
 	//g2->end();
-	//
 	
 	auto quads = gfx2d::quad::batcher;
 	quads->set_atlas(gfx2d::quad::atlases::gui);
@@ -163,7 +153,7 @@ void app::render(float dt) {
 	char buffer[20];
 	sprintf(buffer, "%d", (int)(1.f/dt));
 	auto tc = textCtx(10, 10);
-	quads->text(tc, buffer, 0xFF000000);
+	quads->text(tc, buffer, iColor::Black);
 	quads->end();
 }
 
