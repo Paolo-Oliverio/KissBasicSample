@@ -7,31 +7,33 @@
 #include <Kiss/render/commands.h>
 #include <Kiss/systems/spriteMove.h>
 #include <Kiss/systems/SpriteSheet.h>
+#include <kinc/graphics4/graphics.h>
 #include <thread>
 
 #ifdef KISS_IMGUI
 	#include <imgui.h>
 #endif
 
-//#include <Kore/Graphics2/Graphics.h>
-
 using namespace kiss;
 
-namespace {
+namespace 
+{
 	entt::registry registry;
 
 	#ifdef KISS_IMGUI //imgui state
 		bool show_another_window = true;
 	#endif
 
-	namespace win {
+	namespace win 
+	{
 		u32 w = 1280;
 		u32 h = 720;
 		f32 scale = 1.f;
 		f32 sw = (w / scale);
 		f32 sh = (h / scale);
 	}
-	ecs::flipbookData Anims[1] = {
+	ecs::flipbookData Anims[1] = 
+	{
 		1.f,//u16 duration; //second = 1000
 		id::spr::RectAnim1,
 		3//u8	 numFrames;
@@ -42,31 +44,39 @@ namespace {
 	gfx2d::command::buffer commandbuffer(bufferData, buffersize);
 }
 
-//Kore::Graphics2::Graphics2* g2;
-
-namespace entities {
-	void init(entt::registry& world, int entities_n) {
+namespace entities 
+{
+	void init(entt::registry& world, int entities_n) 
+	{
 		using namespace ecs;
 		auto group = world.group<pos2d, vel2d>();
 		auto spr = sprite{ id::spr::RectAnim1, 2 ,0 };
 		auto bounds = aabb(14, 32, win::sw - 10, win::sh);
 		flipbook::properties options{ 1,0,0,4,0 };
-		for (auto i = 0; i < entities_n; ++i) {
+		for (auto i = 0; i < entities_n; ++i) 
+		{
 			auto entity = world.create();
 			auto pos = pos2d::rand(bounds);
-			auto vel = vel2d::rand(-90, 90, (float)math::Random::get(150, 500));
+			auto vel = vel2d::rand(-90, 90, (float)kinc_random_get_in(150, 500));
 			auto s = vel.len()*0.01f;
 			world.emplace<pos2d>(entity, pos);
 			world.emplace<vel2d>(entity, vel);
-			flipbook::play(world,entity, &Anims[0], options,math::Random::get(0,20) * 0.1f, s);
+			flipbook::play(world,entity, &Anims[0], options, kinc_random_get_in(0, 20) * 0.1f, s);
 		}
 	}
 
-	void render(float dt, entt::registry& world, gfx2d::quad::colored* quads) {
+	void render(float dt, entt::registry& world, gfx2d::quad::colored* quads) 
+	{
 		using namespace ecs;
-		const iColor c[3] = { iColor::Orange, iColor::Pink, iColor::White };
+		const iColor c[3] = 
+		{ 
+			iColor::Orange, 
+			iColor::Pink, 
+			iColor::White 
+		};
 		auto view = world.group<pos2d, vel2d>(entt::get<flipbook>);
-		for (auto entity : view) {
+		for (auto entity : view) 
+		{
 			const auto& [pos,flip] = view.get<pos2d, flipbook>(entity);
 			quads->sprite(flip.getFrame(), pos.x, pos.y, c[flip.position]);
 			//quads.add_sprite(id::spr::RectAnim1, pos,iColor::White);
@@ -74,7 +84,8 @@ namespace entities {
 	}
 }
 
-void setupCommandBuffer() {
+void setupCommandBuffer() 
+{
 	using namespace win;
 	using namespace gfx2d::command;
 	using namespace id;
@@ -92,8 +103,9 @@ void setupCommandBuffer() {
 		.color(iColor::Red).font(font).text("Mondo!!!");
 }
 
-int	app::main(int argc, char** argv) {
-	math::Random::init(0);
+int	app::main(int argc, char** argv) 
+{
+	kinc_random_init(0);
 	using namespace win;
 	framework::init("Hello World");
 	/*
@@ -112,19 +124,21 @@ int	app::main(int argc, char** argv) {
 	return 0;
 }
 
-void app::resize(int x, int y, void* data){
+void app::resize(int x, int y, void* data)
+{
 	using namespace win;
 	w = x;
 	h = y;
 	scale = 1.0f;
 	sw = (x / scale);
 	sh = (y / scale);
-	gfx2d::matrices::projection(sw, sh);
+	gfx2d::resize(w, h, scale);
 	commandbuffer.reset();
 	setupCommandBuffer();
 }
 
-void app::update(float dt) {
+void app::update(float dt) 
+{
 	const aabb bounds(14, 32, win::sw - 10, win::sh);
 	ecs::move::step_in_aabb(registry, dt, bounds);
 	ecs::system::UpdateFlipbooks(registry, dt);
@@ -133,13 +147,9 @@ void app::update(float dt) {
 
 
 void app::render(float dt) {
-	gx::scissor(0, 0, win::w, win::h);
-	gx::clear(gx::ClearColorFlag,0xFF808080);
-	//gx::clear(gx::ClearColorFlag, iColor((u8)math::Random::get(40, 255), (u8)math::Random::get(40, 255), (u8)math::Random::get(40, 255)));
-
-	//g2->begin(false, -1, -1, false);
-	//g2->fillRect(0, 0, 1024, 512);
-	//g2->end();
+	kinc_g4_scissor(0, 0, win::w, win::h);
+	kinc_g4_clear(KINC_G4_CLEAR_COLOR, 0xFF808080, 0, 0);
+	//kinc_g4_clear(KINC_G4_CLEAR_COLOR, iColor((u8)kinc_random_get_in(40, 255), (u8)kinc_random_get_in(40, 255), (u8)kinc_random_get_in(40, 255)), 0, 0);
 	
 	auto quads = gfx2d::quad::batcher;
 	quads->set_atlas(gfx2d::quad::atlases::gui);
@@ -178,5 +188,5 @@ void app::imgui(float dt) {
 #endif
 
 void app::shutdown() {
-	//delete g2;
+
 }

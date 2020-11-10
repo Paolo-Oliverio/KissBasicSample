@@ -6,7 +6,7 @@ p.addIncludeDir('src');
 p.addProject("../../engine/");
 p.addProject("../../thirdparty/hfsm2/");
 p.addProject("../../thirdparty/entt/");
-p.addProject("../../thirdparty/imgui/");
+//p.addProject("../../thirdparty/imgui/");
 
 p.setDebugDir('bin/'+Project.platform);
 //console.log(GraphicsApi)
