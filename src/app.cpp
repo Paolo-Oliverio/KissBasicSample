@@ -1,8 +1,6 @@
 #include <pch.h>
 #include <Kiss/app.h>
-//#include "fsmSemaphore.h"
 #include <entt/entt.hpp>
-#include <Kore/Display.h>
 #include <Kiss/components/sprite.h>
 #include <Kiss/render/commands.h>
 #include <Kiss/systems/spriteMove.h>
@@ -118,7 +116,6 @@ int	app::main(int argc, char** argv)
 	sh = (h / scale);
 #endif*/
 	framework::setResolution(w, h, scale, 1);
-	//g2 = new Kore::Graphics2::Graphics2(w, h);
 	setupCommandBuffer();
 	entities::init(registry, 4000);
 	return 0;
@@ -132,7 +129,7 @@ void app::resize(int x, int y, void* data)
 	scale = 1.0f;
 	sw = (x / scale);
 	sh = (y / scale);
-	gfx2d::resize(w, h, scale);
+	gfx2d::resize((float)w, (float)h, scale);
 	commandbuffer.reset();
 	setupCommandBuffer();
 }
@@ -144,10 +141,10 @@ void app::update(float dt)
 	ecs::system::UpdateFlipbooks(registry, dt);
 }
 
-
-
 void app::render(float dt) {
+	kinc_g4_viewport(0, 0, win::w, win::h);
 	kinc_g4_scissor(0, 0, win::w, win::h);
+	//kinc_g4_scissor(0, 0, 1280, 720);
 	kinc_g4_clear(KINC_G4_CLEAR_COLOR, 0xFF808080, 0, 0);
 	//kinc_g4_clear(KINC_G4_CLEAR_COLOR, iColor((u8)kinc_random_get_in(40, 255), (u8)kinc_random_get_in(40, 255), (u8)kinc_random_get_in(40, 255)), 0, 0);
 	
