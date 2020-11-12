@@ -4,9 +4,19 @@ let p = new Project(projectName + '_' + Project.platform);
 p.addFile('src/**');
 p.addIncludeDir('src');
 p.addProject("../../engine/");
-p.addProject("../../thirdparty/hfsm2/");
-p.addProject("../../thirdparty/entt/");
-p.addProject("../../thirdparty/imgui/");
+
+let modules = [
+	//'hfsm2',
+	'entt',
+	'imgui',
+	//'box2d'
+];
+let mlen = modules.length;
+for (i = 0; i < mlen; ++i){
+	p.addProject('../../thirdparty/' + modules[i] + '/');
+}	
+
+p.c11 = true;
 
 p.setDebugDir('bin/'+Project.platform);
 //console.log(GraphicsApi)
