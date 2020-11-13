@@ -55,7 +55,7 @@ namespace
 #ifdef KISS_BOX2D
 namespace box2d 
 {
-	b2Vec2 gravity(0.0f, 9800.0f);
+	b2Vec2 gravity(0.0f, 720.0f);
 	b2World* world;
 	b2Body* groundBody;
 	b2Body* body;
@@ -65,7 +65,7 @@ namespace box2d
 		world = new b2World(gravity);
 		b2BodyDef groundBodyDef;
 		groundBodyDef.position.Set(640.f, 500.0f);
-		groundBodyDef.angle = deg2rad(0);
+		groundBodyDef.angle = deg2rad(20);
 		groundBody = world->CreateBody(&groundBodyDef);
 		b2PolygonShape groundBox;
 		groundBox.SetAsBox(1000.0f, 5.0f);
@@ -84,8 +84,8 @@ namespace box2d
 		b2FixtureDef fixtureDef;
 		fixtureDef.shape = &dynamicBox;
 		fixtureDef.density = 1.0f;
-		fixtureDef.friction = 0.75f;
-		fixtureDef.restitution = 1.f;
+		fixtureDef.friction = 0.5f;
+		fixtureDef.restitution = 0.8f;
 		b2BodyDef bodyDef;
 		bodyDef.type = b2_dynamicBody;
 		
@@ -93,13 +93,23 @@ namespace box2d
 		body = world->CreateBody(&bodyDef);
 		body->CreateFixture(&fixtureDef);
 
-		bodyDef.position.Set(100.0f, 132.0f);
+		bodyDef.position.Set(90.0f, 132.0f);
 		body2 = world->CreateBody(&bodyDef);
-		//body2->CreateFixture(&fixtureDef);
+		body2->CreateFixture(&fixtureDef);
 	}
 
 	void step(float dt) {
-		world->Step(dt, 6, 2);
+		if (elapsed > 10) {
+			body->SetTransform(b2Vec2(100 + (float)kinc_random_get_in(-10, 10), 100), 0);
+			body->SetAngularVelocity(0);
+			body->SetLinearVelocity(b2Vec2(0,0));
+			body2->SetTransform(b2Vec2(100 + (float)kinc_random_get_in(-20, 20), 132), 0);
+			body2->SetAngularVelocity(0);
+			body2->SetLinearVelocity(b2Vec2(0, 0));
+			elapsed = 0;
+		}
+		world->Step(dt, 10, 10);
+
 	}
 
 	void render() {
@@ -140,9 +150,9 @@ namespace entities
 		using namespace ecs;
 		const iColor c[3] = 
 		{ 
-			iColor::Orange, 
-			iColor::Pink, 
-			iColor::White 
+			0x8000A5FF,
+			0x80800080,
+			0x80CBC0FF
 		};
 		auto view = world.group<pos2d, vel2d>(entt::get<flipbook>);
 		for (auto entity : view) 
@@ -216,23 +226,22 @@ void app::update(float dt)
 }
 
 void app::render(float dt) {
-	kinc_g4_viewport(0, 0, win::w, win::h);
+	//kinc_g4_viewport(0, 0, win::w, win::h);
 	kinc_g4_scissor(0, 0, win::w, win::h);
-	//kinc_g4_scissor(0, 0, 1280, 720);
 	kinc_g4_clear(KINC_G4_CLEAR_COLOR, 0xFF808080, 0, 0);
 	//kinc_g4_clear(KINC_G4_CLEAR_COLOR, iColor((u8)kinc_random_get_in(40, 255), (u8)kinc_random_get_in(40, 255), (u8)kinc_random_get_in(40, 255)), 0, 0);
 	
 	auto quads = gfx2d::quad::batcher;
 	quads->set_atlas(gfx2d::quad::atlases::gui);
 	quads->begin();
-	//entities::render(dt, registry, quads);
+	entities::render(dt, registry, quads);
 	//----------------------------------------
 	quads->scale9(id::s9::Test, aabb(0.f, 0.f, 200.f, 200.f), iColor::White);
 	//----------------------------------------------------------------
 	commandbuffer.execute();
 	//----------------------------------------------------------------------
-	elapsed += dt*360;
-	quads->sprite(id::spr::RectAnim1, 100, 100, rot(deg2rad(elapsed)), iColor::White);
+	elapsed += dt;
+	quads->sprite(id::spr::RectAnim1, 100, 100, rot(deg2rad(elapsed * 360)), iColor::White);
 	WithBox2D(box2d::render());
 	//----------------------------------------------------------------------
 	char buffer[20];

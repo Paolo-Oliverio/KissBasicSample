@@ -9,7 +9,7 @@ let modules = [
 	//'hfsm2',
 	'entt',
 	'imgui',
-	//'box2d'
+	'box2d'
 ];
 let mlen = modules.length;
 for (i = 0; i < mlen; ++i){
