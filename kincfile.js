@@ -5,16 +5,25 @@ p.addFile('src/**');
 p.addIncludeDir('src');
 p.addProject("../../engine/");
 
+p.addDefine('STBI_ONLY_PNG');
+
 let modules = [
 	//'hfsm2',
 	'entt',
 	'imgui',
-	'box2d'
+	'box2d',
+	//'soloud'
 ];
 let mlen = modules.length;
-for (i = 0; i < mlen; ++i){
-	p.addProject('../../thirdparty/' + modules[i] + '/');
-}	
+for (mod = 0; mod < mlen; ++mod){
+	let modname = modules[mod].toUpperCase();
+	console.log('{//' +  modules[mod]);
+	p.addProject('../../thirdparty/' + modules[mod] + '/');
+	let modDef = 'KISS_' + modname;
+	p.addDefine(modDef);
+	console.log('#define ' + modDef);
+	console.log('}');
+}
 
 p.c11 = true;
 
