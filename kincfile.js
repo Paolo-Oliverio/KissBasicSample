@@ -20,7 +20,7 @@ p.c11 = true;
 
 p.setDebugDir('bin/'+Project.platform);
 //console.log(GraphicsApi)
-switch (Project.platform) {
+switch (platform) {
 	case "html5":
 		p.setDebugDir('html5');
 		p.addDefine("NDEBUG");
