@@ -7,86 +7,37 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Project UWP",
+            "name": "Windows Dx11 Project",
             "program": "${workspaceFolder:Kinc}/make.js",
-            "args": ["--to","Projects/UWP","--noshaders", "-t", "windowsapp"]
+            "args": ["--to","Projects/WindowsDx11", "-g", "direct3d11"]
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "Shaders UWP",
-            "program": "${workspaceFolder:Kinc}/make.js",
-            "args": ["--to","Projects/UWP","--onlyshaders", "-t", "windowsapp"]
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Project WindowsDx11",
-            "program": "${workspaceFolder:Kinc}/make.js",
-            "args": ["--to","Projects/WindowsDx11","--noshaders", "-g", "direct3d11"]
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Shaders WindowsDx11",
+            "name": "Windows Dx11 Shaders Only",
             "program": "${workspaceFolder:Kinc}/make.js",
             "args": ["--to","Projects/WindowsDx11","--onlyshaders", "-g", "direct3d11"]
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "Project WindowsDx12",
+            "name": "Windows OpenGL Project",
             "program": "${workspaceFolder:Kinc}/make.js",
-            "args": ["--to","Projects/WindowsDx12","--noshaders", "-g", "direct3d12"]
+            "args": ["--to","Projects/WindowsGL", "-g", "opengl"]
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "Shaders WindowsDx12",
-            "program": "${workspaceFolder:Kinc}/make.js",
-            "args": ["--to","Projects/WindowsDx12","--onlyshaders", "-g", "direct3d12"]
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Project WindowsVulkan",
-            "program": "${workspaceFolder:Kinc}/make.js",
-            "args": ["--to","Projects/WindowsVk","--noshaders", "-g", "vulkan"]
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Shaders WindowsVulkan",
-            "program": "${workspaceFolder:Kinc}/make.js",
-            "args": ["--to","Projects/WindowsVk","--onlyshaders", "-g", "vulkan"]
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Project WindowsOpenGL",
-            "program": "${workspaceFolder:Kinc}/make.js",
-            "args": ["--to","Projects/WindowsGL","--noshaders", "-g", "opengl"]
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Shaders WindowsOpenGL",
+            "name": "Windows OpenGL Shaders Only",
             "program": "${workspaceFolder:Kinc}/make.js",
             "args": ["--to","Projects/WindowsGL","--onlyshaders", "-g", "opengl"]
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "Project HTML5",
+            "name": "HTML5",
             "program": "${workspaceFolder:Kinc}/make.js",
-            "args": ["--to","Build" ,"--noshaders", "-t", "html5"]
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Shaders HTML5",
-            "program": "${workspaceFolder:Kinc}/make.js",
-            "args": ["--to","Build" ,"--onlyshaders", "-t", "html5"]
+            "args": ["--to","Build", "-t", "html5"]
         },
         {
             "type": "node",
