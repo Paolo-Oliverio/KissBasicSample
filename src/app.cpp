@@ -6,6 +6,7 @@
 #include <Kiss/systems/spriteMove.h>
 #include <Kiss/systems/SpriteSheet.h>
 #include <kinc/graphics4/graphics.h>
+#include <kinc/display.h>
 #include <thread>
 
 #ifdef KISS_IMGUI
@@ -24,8 +25,6 @@ using namespace kiss;
 
 namespace 
 {
-	entt::registry registry;
-
 	#ifdef KISS_IMGUI //imgui state
 		bool show_another_window = true;
 	#endif
@@ -34,9 +33,8 @@ namespace
 	{
 		u32 w = 1280;
 		u32 h = 720;
-		f32 scale = 1.f;
-		f32 sw = (w / scale);
-		f32 sh = (h / scale);
+		f32 sw = w;
+		f32 sh = h;
 	}
 	ecs::flipbookData Anims[1] = 
 	{
@@ -44,10 +42,6 @@ namespace
 		id::spr::RectAnim1,
 		3//u8	 numFrames;
 	};
-
-	constexpr int buffersize = 512;
-	u8 bufferData[buffersize];
-	gfx2d::command::buffer commandbuffer(bufferData, buffersize);
 
 	float elapsed = 0;
 }
@@ -61,7 +55,8 @@ namespace box2d
 	b2Body* body;
 	b2Body* body2;
 
-	void init() {
+	void init() 
+	{
 		world = new b2World(gravity);
 		b2BodyDef groundBodyDef;
 		groundBodyDef.position.Set(640.f, 500.0f);
@@ -98,7 +93,10 @@ namespace box2d
 		body2->CreateFixture(&fixtureDef);
 	}
 
-	void step(float dt) {
+	void update(float dt) 
+	{
+		elapsed += dt;
+
 		if (elapsed > 10) {
 			body->SetTransform(b2Vec2(100 + (float)kinc_random_get_in(-10, 10), 100), 0);
 			body->SetAngularVelocity(0);
@@ -109,12 +107,13 @@ namespace box2d
 			elapsed = 0;
 		}
 		world->Step(dt, 10, 10);
-
 	}
 
-	void render() {
+	void render() 
+	{
 		auto a = body->GetTransform();
 		auto quads = gfx2d::quad::batcher;
+		quads->sprite(id::spr::RectAnim1, 100, 100, rot(deg2rad(elapsed * 360)), iColor::White);
 		quads->sprite(id::spr::RectAnim1, a.p.x, a.p.y, rot(a.q.c, a.q.s), iColor::White);
 		a = body2->GetTransform();
 		quads->sprite(id::spr::RectAnim1, a.p.x, a.p.y, rot(a.q.c, a.q.s), iColor::White);
@@ -122,16 +121,16 @@ namespace box2d
 }
 #endif
 
-
-
-namespace entities 
+namespace entities
 {
-	void init(entt::registry& world, int entities_n) 
+	entt::registry world;
+
+	void init(int entities_n) 
 	{
 		using namespace ecs;
 		auto group = world.group<pos2d, vel2d>();
 		auto spr = sprite{ id::spr::RectAnim1, 2 ,0 };
-		auto bounds = aabb(14, 32, win::sw - 10, win::sh);
+		auto bounds = aabb(14, 32, win::w - 10, win::h);
 		flipbook::properties options{ 1,0,0,4,0 };
 		for (auto i = 0; i < entities_n; ++i) 
 		{
@@ -145,103 +144,112 @@ namespace entities
 		}
 	}
 
-	void render(float dt, entt::registry& world, gfx2d::quad::colored* quads) 
+	void update(float dt) {
+		const aabb bounds(14, 32, win::sw - 10, win::sh);
+		ecs::move::step_in_aabb(world, dt, bounds);
+		ecs::system::UpdateFlipbooks(world, dt);
+	}
+
+	void render() 
 	{
 		using namespace ecs;
-		const iColor c[3] = 
-		{ 
-			0x8000A5FF,
-			0x80800080,
-			0x80CBC0FF
-		};
 		auto view = world.group<pos2d, vel2d>(entt::get<flipbook>);
+		auto quads = gfx2d::quad::batcher;
+		const u32 colors[] = { 0x8000A5FF, 0x80800080, 0x80CBC0FF };
 		for (auto entity : view) 
 		{
-			const auto& [pos,flip] = view.get<pos2d, flipbook>(entity);
-			quads->sprite(flip.getFrame(), pos.x, pos.y, c[flip.position]);
-			//quads.add_sprite(id::spr::RectAnim1, pos,iColor::White);
+			const auto& [position,animation] = view.get<pos2d, flipbook>(entity);
+			quads->sprite(animation.getFrame(), position.x, position.y, colors[animation.frameOffset]);
 		}
 	}
 }
 
-void setupCommandBuffer() 
+void setupCommandBuffer(float sh, float sw) 
 {
-	using namespace win;
-	using namespace gfx2d::command;
-	using namespace id;
-	constexpr sprId spr = spr::RectRect;
-	constexpr sprId s9 = s9::Test;
-	constexpr u8 font = fnt::Text;
-	commandbuffer
-		.sprite(spr, 16, 32)
-		.sprite(spr, 16, sh)
-		.sprite(spr, sw - 10, sh)
-		.sprite(spr, sw - 10, 32)
-		.scale9(s9, 250, 250, 294, 300)
-		.scale9(s9, 306, 250, 500, 300)
-		.textblock(100, 100).text("Ciao ")
-		.color(iColor::Red).font(font).text("Mondo!!!");
+
 }
 
-int	app::main(int argc, char** argv) 
+namespace bufferedCommands {
+
+	constexpr int buffersize = 512;
+	u8 bufferData[buffersize];
+	gfx2d::command::buffer commandbuffer(bufferData, buffersize);
+
+	void setup(float x, float y) {
+		commandbuffer.reset();
+		using namespace win;
+		using namespace gfx2d::command;
+		using namespace id;
+		constexpr sprId spr = spr::RectRect;
+		constexpr sprId s9 = s9::Test;
+		constexpr u8 font = fnt::Text;
+		commandbuffer
+			.sprite(spr, 16, 32)
+			.sprite(spr, 16, sh)
+			.sprite(spr, sw - 10, sh)
+			.sprite(spr, sw - 10, 32)
+			.scale9(s9, 250, 250, 294, 300)
+			.scale9(s9, 306, 250, 500, 300)
+			.textblock(100, 100).text("Ciao ")
+			.color(iColor::Red).font(font).text("Mondo!!!");
+	}
+
+	void render() {
+		commandbuffer.execute();
+	}
+}
+
+int	app::on_launch(int argc, char** argv)
 {
 	kinc_random_init(0);
 	using namespace win;
 	framework::init("Hello World");
-	/*
+/*
 #ifndef KORE_HTML5
-	auto D = Kore::Display::primary();
-	w = D->width()/2;
-	h = D->height()/2;
-	scale = 1.f;
-	sw = (w / scale);
-	sh = (h / scale);
-#endif*/
-	framework::setResolution(w, h, scale, 1);
-	setupCommandBuffer();
-	entities::init(registry, 4000);
+	auto d = kinc_display_current_mode(0);
+	w = d.width;
+	h = d.height;
+#endif
+*/
+	framework::setResolution(w, h);
+	bufferedCommands::setup(w, h);
+	entities::init(4000);
 	WithBox2D(box2d::init());
 	return 0;
 }
 
-void app::resize(int x, int y, void* data)
+void app::on_resize(int x, int y)
 {
 	using namespace win;
 	w = x;
 	h = y;
-	scale = 1.0f;
-	sw = (x / scale);
-	sh = (y / scale);
-	gfx2d::resize((float)w, (float)h, scale);
-	commandbuffer.reset();
-	setupCommandBuffer();
+	sw = (x / gfx2d::Pipe2d.scaling);
+	sh = (y / gfx2d::Pipe2d.scaling);
+	setupCommandBuffer(sw,sh);
 }
 
-void app::update(float dt) 
+void app::on_update(float dt)
 {
-	const aabb bounds(14, 32, win::sw - 10, win::sh);
-	ecs::move::step_in_aabb(registry, dt, bounds);
-	ecs::system::UpdateFlipbooks(registry, dt);
-	WithBox2D(box2d::step(dt);)
+	entities::update(dt);
+	WithBox2D(box2d::update(dt);)
 }
 
-void app::render(float dt) {
+void app::on_render(float dt) {
 	//kinc_g4_viewport(0, 0, win::w, win::h);
-	kinc_g4_scissor(0, 0, win::w, win::h);
+	//kinc_g4_scissor(0, 0, win::w, win::h);
+	//kinc_g4_viewport(0, 0, 1280, 720);
+	//kinc_g4_scissor(0, 0, 1280,720);
 	kinc_g4_clear(KINC_G4_CLEAR_COLOR, 0xFF808080, 0, 0);
 	//kinc_g4_clear(KINC_G4_CLEAR_COLOR, iColor((u8)kinc_random_get_in(40, 255), (u8)kinc_random_get_in(40, 255), (u8)kinc_random_get_in(40, 255)), 0, 0);
 	
 	auto quads = gfx2d::quad::batcher;
 	quads->set_atlas(gfx2d::quad::atlases::gui);
 	quads->begin();
-	entities::render(dt, registry, quads);
-	//----------------------------------------
-	quads->scale9(id::s9::Test, aabb(0.f, 0.f, 200.f, 200.f), iColor::White);
+
+	entities::render();
 	//----------------------------------------------------------------
-	commandbuffer.execute();
+	bufferedCommands::render();
 	//----------------------------------------------------------------------
-	elapsed += dt;
-	quads->sprite(id::spr::RectAnim1, 100, 100, rot(deg2rad(elapsed * 360)), iColor::White);
 	WithBox2D(box2d::render());
 	//----------------------------------------------------------------------
 	char buffer[20];
@@ -252,7 +260,7 @@ void app::render(float dt) {
 }
 
 #ifdef KISS_IMGUI	
-void app::imgui(float dt) {
+void app::on_imgui(float dt) {
 
 	ImGui::Begin("Hello, world!");
 	ImGui::Text("This is some useful text.");
@@ -261,16 +269,15 @@ void app::imgui(float dt) {
 	// 3. Show another simple window.
 	if (show_another_window)
 	{
-		ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+		ImGui::Begin("Another Window", &show_another_window);
 		ImGui::Text("Hello from another window!");
 		if (ImGui::Button("Close Me"))
 			show_another_window = false;
 		ImGui::End();
 	}
-	//ImGui::ShowDemoWindow();
 }
 #endif
 
-void app::shutdown() {
+void app::on_shutdown() {
 	WithBox2D(delete box2d::world);
 }
