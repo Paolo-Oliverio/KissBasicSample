@@ -1,6 +1,6 @@
 #include "pch.h"
 #include <Kiss/render/commands.h>
-#include "assets/Data.h"
+#include "assets/data.h"
 #include "gfxcommandstest.h"
 using namespace kiss;
 

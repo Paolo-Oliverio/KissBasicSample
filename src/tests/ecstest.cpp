@@ -1,7 +1,7 @@
 #include <entt/entt.hpp>
 #include <Kiss/systems/spriteMove.h>
 #include <Kiss/systems/SpriteSheet.h>
-#include "assets/Data.h"
+#include "assets/data.h"
 #include "ecstest.h"
 
 using namespace kiss;
