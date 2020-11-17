@@ -47,11 +47,14 @@ namespace ecstest
 		using namespace ecs;
 		auto view = world.group<pos2d, vel2d>(entt::get<flipbook>);
 		auto quads = gfx2d::quad::batcher;
-		const u32 colors[] = { 0x8000A5FF, 0x80800080, 0x80CBC0FF };
+		const iColor darkc = 0x80203040;
+		const iColor colors[] = { 0xFF00A5FF, 0xFF800080, 0xFFCBC0FF };
+		const iColor dark[] = { colors[0] * darkc,  colors[1] * darkc, colors[2] * darkc };
 		for (auto entity : view)
 		{
 			const auto& [position, animation] = view.get<pos2d, flipbook>(entity);
-			quads->sprite(animation.getFrame(), position.x, position.y, colors[animation.frameOffset]);
+			quads->setVData(colors[animation.frameOffset], colors[animation.frameOffset], dark[animation.frameOffset], dark[animation.frameOffset]);
+			quads->sprite(animation.getFrame(), position.x, position.y);
 		}
 	}
 }

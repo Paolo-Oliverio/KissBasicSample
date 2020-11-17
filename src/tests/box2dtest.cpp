@@ -10,7 +10,7 @@ using namespace kiss;
 constexpr float physcale = 100.f;
 
 namespace {
-	b2World world = b2World({ 0.f, 9.81 });
+	b2World world = b2World({ 0.f, 9.81f });
 	float	elapsed = 0;
 	b2Body* groundBody;
 	b2Body* body;
@@ -74,10 +74,12 @@ namespace box2dtest {
 	{
 		auto a = body->GetTransform();
 		auto quads = gfx2d::quad::batcher;
-		quads->sprite(id::spr::RectAnim1, 100, 100, rot(deg2rad(elapsed * 360)), iColor::White);
-		quads->sprite(id::spr::RectAnim1, a.p.x * physcale, a.p.y * physcale, rot(a.q.c, a.q.s), iColor::White);
+		u32 color[4] = { iColor::White, iColor::Red, iColor::Green, iColor::Blue };
+		quads->setVData(color);
+		quads->sprite(id::spr::RectAnim1, 100, 100, rot(deg2rad(elapsed * 360)));
+		quads->sprite(id::spr::RectAnim1, a.p.x * physcale, a.p.y * physcale, rot(a.q.c, a.q.s));
 		a = body2->GetTransform();
-		quads->sprite(id::spr::RectAnim1, a.p.x * physcale, a.p.y * physcale, rot(a.q.c, a.q.s), iColor::White);
+		quads->sprite(id::spr::RectAnim1, a.p.x * physcale, a.p.y * physcale, rot(a.q.c, a.q.s));
 	}
 }
 #endif

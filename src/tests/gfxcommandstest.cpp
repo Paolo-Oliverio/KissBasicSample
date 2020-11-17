@@ -6,7 +6,7 @@ using namespace kiss;
 
 constexpr int buffersize = 512;
 u8 bufferData[buffersize];
-gfx2d::command::buffer commandbuffer(bufferData, buffersize);
+gfx2d::command::buffer<u32> commandbuffer(bufferData, buffersize);
 
 namespace gfxCmdBuffer 
 {
@@ -17,7 +17,9 @@ namespace gfxCmdBuffer
 		constexpr sprId spr = spr::RectRect;
 		constexpr sprId s9 = s9::Test;
 		constexpr u8 font = fnt::Text;
+		u32 col[4] = { 0xFF505050, 0x80FFFFFF,0xFF505050,0x80FFFFFF };
 		commandbuffer
+			.color(col)
 			.sprite(spr, 16, 32)
 			.sprite(spr, 16, y)
 			.sprite(spr, x - 10, y)

@@ -4,7 +4,7 @@
 #include <kinc/display.h>
 #include <kinc/math/random.h>
 #include <string>//for string appending.
-
+#include <assets/Data.h>
 #include "tests/gfxcommandstest.h"
 
 #ifndef KISS_BOX2D
@@ -45,7 +45,7 @@ int	app::on_launch(int argc, char** argv)
 */
 	framework::setResolution(w, h);
 	gfxCmdBuffer::setup(sw, sh);
-	WithEntt(ecstest::init(sw,sh,4000));
+	WithEntt(ecstest::init(sw, sh, 4000));
 	WithBox2D(box2dtest::init());
 	return 0;
 }
@@ -84,10 +84,14 @@ void app::on_render(float dt)
 	//----------------------------------------------------------------
 	gfxCmdBuffer::render();
 	//----------------------------------------------------------------
-	WithBox2D(box2dtest::render());
-	//----------------------------------------------------------------
+	quads->setVData(iColor::White, iColor::White, iColor::White, 0xFF404040);
+	quads->scale9(id::s9::Test, aabb(10, 10, 210, 210));
+	quads->setVData(iColor::White, iColor::White, 0xFFA0A0A0, 0xFFA0A0A0);
 	std::string str = std::to_string((int)(1.f / dt));
 	auto tc = textCtx(10, 10);
-	quads->text(tc, str.c_str(), iColor::Black);
+	quads->text(tc, str.c_str());	
+
+	WithBox2D(box2dtest::render());
+	//----------------------------------------------------------------
 	quads->end();
 }
