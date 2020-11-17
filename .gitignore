@@ -1,0 +1,6 @@
+Projects/
+build/
+*.frag
+*.vert
+*.exe
+*.ini
