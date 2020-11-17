@@ -1,6 +1,9 @@
 let projectName = 'Sample';
 let p = new Project(projectName + '_' + Project.platform);
 
+Options = {};
+Options.enableDemo = true;
+
 p.addFiles(
 	'src/app.cpp',
 	'src/pch.h',
@@ -46,7 +49,7 @@ let mlen = modules.length;
 for (mod = 0; mod < mlen; ++mod){
 	let modname = modules[mod].toUpperCase();
 	console.log('{//' +  modules[mod]);
-	p.addProject('../../thirdparty/' + modules[mod] + '/');
+	p.addProject('../../thirdparty/' + modules[mod] + '/', Options);
 	let modDef = 'KISS_' + modname;
 	p.addDefine(modDef);
 	console.log('#define ' + modDef);
