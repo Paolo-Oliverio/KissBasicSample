@@ -75,7 +75,7 @@ namespace box2dtest {
 		auto a = body->GetTransform();
 		auto quads = gfx2d::quad::batcher;
 		u32 color[4] = { iColor::White, iColor::Red, iColor::Green, iColor::Blue };
-		quads->setVData(color);
+		quads->vertexdata(color);
 		quads->sprite(id::spr::RectAnim1, 100, 100, rot(deg2rad(elapsed * 360)));
 		quads->sprite(id::spr::RectAnim1, a.p.x * physcale, a.p.y * physcale, rot(a.q.c, a.q.s));
 		a = body2->GetTransform();

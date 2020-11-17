@@ -78,13 +78,13 @@ void app::on_render(float dt)
 	//kinc_g4_clear(KINC_G4_CLEAR_COLOR, iColor((u8)kinc_random_get_in(40, 255), (u8)kinc_random_get_in(40, 255), (u8)kinc_random_get_in(40, 255)), 0, 0);
 	//----------------------------------------------------------------
 	auto quads = gfx2d::quad::batcher;
-	quads->set_atlas(gfx2d::quad::atlases::gui);
+	quads->atlas(gfx2d::quad::atlases::gui);
 	quads->begin();
 	WithEntt(ecstest::render());
 	//----------------------------------------------------------------
 	gfxCmdBuffer::render();
 	//----------------------------------------------------------------
-	quads->setVData(iColor::White, iColor::White, iColor::White, 0xFF404040);
+	quads->vertexdata(iColor::White, iColor::White, iColor::White, 0xFF404040);
 	quads->scale9(id::s9::Test, aabb(10, 10, 210, 210));
 	quads->setVData(iColor::White, iColor::White, 0xFFA0A0A0, 0xFFA0A0A0);
 	std::string str = std::to_string((int)(1.f / dt));

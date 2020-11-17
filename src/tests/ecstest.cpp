@@ -7,11 +7,11 @@
 using namespace kiss;
 entt::registry world;
 
-ecs::flipbookData Anims[1] =
+ecs::flipbookData Anims[] =
 {
-	1.f,//u16 duration; //second = 1000
+	1.f, 	// Frame duration
 	id::spr::RectAnim1,
-	3//u8	 numFrames;
+	3		// u8 numFrames;
 };
 
 namespace ecstest 
@@ -47,13 +47,13 @@ namespace ecstest
 		using namespace ecs;
 		auto view = world.group<pos2d, vel2d>(entt::get<flipbook>);
 		auto quads = gfx2d::quad::batcher;
-		const iColor darkc = 0x80203040;
+		const iColor cMultiplier = 0x80203040;
 		const iColor colors[] = { 0xFF00A5FF, 0xFF800080, 0xFFCBC0FF };
-		const iColor dark[] = { colors[0] * darkc,  colors[1] * darkc, colors[2] * darkc };
+		const iColor dark[] = { colors[0] * cMultiplier,  colors[1] * cMultiplier, colors[2] * cMultiplier };
 		for (auto entity : view)
 		{
 			const auto& [position, animation] = view.get<pos2d, flipbook>(entity);
-			quads->setVData(colors[animation.frameOffset], colors[animation.frameOffset], dark[animation.frameOffset], dark[animation.frameOffset]);
+			quads->vertexdata(colors[animation.frameOffset], colors[animation.frameOffset], dark[animation.frameOffset], dark[animation.frameOffset]);
 			quads->sprite(animation.getFrame(), position.x, position.y);
 		}
 	}
