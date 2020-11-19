@@ -45,7 +45,7 @@ int	app::on_launch(int argc, char** argv)
 */
 	framework::setResolution(w, h);
 	gfxCmdBuffer::setup(sw, sh);
-	WithEntt(ecstest::init(sw, sh, 4000));
+	WithEntt(ecstest::init(sw, sh, 80000));
 	WithBox2D(box2dtest::init());
 	return 0;
 }
@@ -57,8 +57,8 @@ void app::on_resize(int x, int y)
 	using namespace win;
 	w = x;
 	h = y;
-	sw = (x / gfx2d::Pipe2d.scaling);
-	sh = (y / gfx2d::Pipe2d.scaling);
+	sw = (x / gfx2d::scaling);
+	sh = (y / gfx2d::scaling);
 	gfxCmdBuffer::setup(sw,sh);
 }
 
@@ -77,21 +77,20 @@ void app::on_render(float dt)
 	kinc_g4_clear(KINC_G4_CLEAR_COLOR, 0xFF808080, 0, 0);
 	//kinc_g4_clear(KINC_G4_CLEAR_COLOR, iColor((u8)kinc_random_get_in(40, 255), (u8)kinc_random_get_in(40, 255), (u8)kinc_random_get_in(40, 255)), 0, 0);
 	//----------------------------------------------------------------
-	auto quads = gfx2d::quad::batcher;
-	quads->atlas(gfx2d::quad::atlases::gui);
-	quads->begin();
+	auto& b = gfx2d::batcher;
+	b.begin(&gfx2d::base::pipeline, gfx2d::atlas0);
 	WithEntt(ecstest::render());
 	//----------------------------------------------------------------
 	gfxCmdBuffer::render();
 	//----------------------------------------------------------------
-	quads->vertexdata(iColor::White, iColor::White, iColor::White, 0xFF404040);
-	quads->scale9(id::s9::Test, aabb(10, 10, 210, 210));
-	quads->setVData(iColor::White, iColor::White, 0xFFA0A0A0, 0xFFA0A0A0);
+	b.vertexdata(iColor::White, iColor::White, iColor::White, 0xFF404040);
+	b.scale9(id::s9::Test, aabb(10, 10, 210, 210));
+	b.vertexdata(iColor::White, iColor::White, 0xFFA0A0A0, 0xFFA0A0A0);
 	std::string str = std::to_string((int)(1.f / dt));
 	auto tc = textCtx(10, 10);
-	quads->text(tc, str.c_str());	
+	b.text(tc, str.c_str());
 
 	WithBox2D(box2dtest::render());
 	//----------------------------------------------------------------
-	quads->end();
+	b.end();
 }
