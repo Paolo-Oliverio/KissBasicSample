@@ -1,0 +1,31 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+    {
+        "label": "localhost html5",
+        "type": "shell",
+        "command": "webserver",
+        "args": [
+            "80", "./Build/Release"
+        ],
+    },
+    {
+        "label": "make html5",
+        "type": "shell",
+        "command": "make",
+        "args": [
+            //-j12 for 12 processes
+            "-j12", "-C", "./Build/Release"
+        ],
+    },
+    {
+        "label": "clean html5",
+        "type": "shell",
+        "command": "del",
+        "args": [
+            ".\\Build\\Release\\*.o"
+        ],
+    },
+
+    ],
+}
