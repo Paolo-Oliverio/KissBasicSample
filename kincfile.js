@@ -20,31 +20,35 @@ p.addProject("../../engine/");
 p.addDefine('STBI_ONLY_PNG');
 
 let modules = [
-	//'hfsm2',
+	'hfsm2',
 	'entt',
 	'imgui',
 	'box2d',
-	//'soloud'
+	'soloud'
 ];
+
 
 let deps = {
 	'box2d' : function (){
 		p.addFiles(
 			'src/tests/box2dtest.h',
-			'src/tests/box2dtest.cpp'
 		);
 	},
 	'entt' : function (){
 		p.addFiles(
 			'src/tests/ecstest.h',
-			'src/tests/ecstest.cpp'
 		);
 	},
 	'imgui' : function (){
 		p.addFiles(
-			'src/tests/imguitest.cpp'
+			'src/tests/imguitest.h',
 		);
 	},
+	'soloud' :function(){
+		p.addFiles(
+			'src/tests/soloudtest.h',
+		);
+	}
 };
 
 let mlen = modules.length;
@@ -62,6 +66,11 @@ for (mod = 0; mod < mlen; ++mod){
 }
 
 p.c11 = true;
+
+if(true){
+	p.kore = false;
+	p.addProject("../../kinc/",Options, "kissfile.js");
+}
 
 p.setDebugDir('bin/'+Project.platform);
 //console.log(GraphicsApi)

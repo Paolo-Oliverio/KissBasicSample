@@ -4,12 +4,12 @@
 
 using namespace kiss;
 
-namespace
+namespace imguitest
 {
 	bool demo_window_open = true;
-}
 
-void app::on_imgui(float dt)
-{
-	ImGui::ShowDemoWindow(&demo_window_open);
+	void exec(float dt)
+	{
+		ImGui::ShowDemoWindow(&demo_window_open);
+	}
 }

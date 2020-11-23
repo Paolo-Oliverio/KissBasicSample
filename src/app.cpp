@@ -3,22 +3,25 @@
 #include <kinc/graphics4/graphics.h>
 #include <kinc/display.h>
 #include <kinc/math/random.h>
+#include <kinc/input/keyboard.h>
+#include <kinc/input/surface.h>
+#include <kinc/input/mouse.h>
+
 #include <string>//for string appending.
-#include <assets/Data.h>
+#include <assets/data.h>
 #include "tests/gfxcommandstest.h"
 
-#ifndef KISS_BOX2D
-#define WithBox2D(x)
-#else
-#define WithBox2D(x) x
-#include "tests/box2dtest.h"
+#ifdef KISS_BOX2D
+	#include "tests/box2dtest.h"
 #endif
-
-#ifndef KISS_ENTT
-#define WithEntt(x)
-#else
-#define WithEntt(x) x
-#include "tests/ecstest.h"
+#ifdef KISS_ENTT 
+	#include "tests/ecstest.h"
+#endif
+#ifdef KISS_SOLOUD
+	#include "tests/soloudtest.h"
+#endif
+#ifdef KISS_IMGUI
+	#include "tests/imguitest.h"
 #endif
 
 using namespace kiss;
@@ -31,7 +34,7 @@ namespace win
 	f32 sh = (f32)h;
 }
 
-int	app::on_launch(int argc, char** argv)
+int	app::start(int argc, char** argv)
 {
 	kinc_random_init(0);
 	using namespace win;
@@ -45,30 +48,44 @@ int	app::on_launch(int argc, char** argv)
 */
 	framework::setResolution(w, h);
 	gfxCmdBuffer::setup(sw, sh);
-	WithEntt(ecstest::init(sw, sh, 80000));
+	WithEntt(ecstest::init(sw, sh, 4000));
 	WithBox2D(box2dtest::init());
 	return 0;
 }
 
-void app::on_shutdown() {}
+void app::release() {
 
-void app::on_resize(int x, int y)
+}
+
+void app::resize(int x, int y)
 {
 	using namespace win;
-	w = x;
-	h = y;
-	sw = (x / gfx2d::scaling);
-	sh = (y / gfx2d::scaling);
+	w = x; sw = (x / gfx2d::scaling);
+	h = y; sh = (y / gfx2d::scaling);
 	gfxCmdBuffer::setup(sw,sh);
 }
 
-void app::on_update(float dt) 
+void app::input(float dt) {
+
+}
+
+void app::prePhysics(float dt) 
 {
 	WithEntt(ecstest::update(win::sw,win::sh,dt));
 	WithBox2D(box2dtest::update(dt));
 }
 
-void app::on_render(float dt) 
+void app::postPhysics(float dt)
+{
+	WithSoloud(soundtest::update(dt));
+}
+
+void app::gui(float dt) 
+{
+	WithImgui(imguitest::exec(dt));
+}
+
+void app::render(float dt) 
 {
 	//kinc_g4_viewport(0, 0, win::w, win::h);
 	kinc_g4_scissor(0, 0, win::w, win::h);
@@ -86,10 +103,11 @@ void app::on_render(float dt)
 	b.vertexdata(iColor::White, iColor::White, iColor::White, 0xFF404040);
 	b.scale9(id::s9::Test, aabb(10, 10, 210, 210));
 	b.vertexdata(iColor::White, iColor::White, 0xFFA0A0A0, 0xFFA0A0A0);
-	std::string str = std::to_string((int)(1.f / dt));
+	std::string str("fps : ");
+	str.append(std::to_string((int)(1.f / dt)));
 	auto tc = textCtx(10, 10);
 	b.text(tc, str.c_str());
-
+	//----------------------------------------------------------------
 	WithBox2D(box2dtest::render());
 	//----------------------------------------------------------------
 	b.end();
