@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<script defer src="kiss.js"></script>
+    <title>Kinc</title>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	<meta name="HandheldFriendly" content="true" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="viewport" content="width=device-width, user-scalable=0, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0" />
+	<link rel="manifest" href="webapp/app.webmanifest">
+	<meta name="theme-color" content="#c0c0c0">
+</head>
+<style>
+	body {
+		background-color:#303030;
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+	}
+	#canvas{
+		touch-action: none;
+		-ms-touch-action: none;
+		//padding: 0;
+		margin: auto;
+		display: block;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		width: 100%;
+    }
+</style>
+<body>
+    <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+    <script type='text/javascript'>
+      // connect to canvas
+    var Module = {
+        preRun: [],
+        postRun: [],
+        print: function() { 
+            console.log(Array.prototype.slice.call(arguments).join(" "));
+        },
+        printErr: function() {
+            console.warn(Array.prototype.slice.call(arguments).join(" "));
+        },
+        canvas: document.getElementById('canvas')
+    }
+    </script>
+</body>
+</html>

@@ -1,5 +1,7 @@
 Projects/
-build/
+Build/
+!Build/Release/index.html
+!Build/Debug/index.html
 *.frag
 *.vert
 *.exe
