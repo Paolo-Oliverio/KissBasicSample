@@ -80,10 +80,12 @@ void app::postPhysics(float dt)
 	WithSoloud(soundtest::update(dt));
 }
 
+#ifdef KISS_IMGUI
 void app::gui(float dt) 
 {
 	WithImgui(imguitest::exec(dt));
 }
+#endif
 
 void app::render(float dt) 
 {
