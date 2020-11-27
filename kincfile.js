@@ -20,11 +20,11 @@ p.addProject("../../engine/");
 p.addDefine('STBI_ONLY_PNG');
 
 let modules = [
-	'hfsm2',
-	'entt',
+	//'hfsm2',
+	//'entt',
 	'imgui',
-	'box2d',
-	'soloud'
+	//'box2d',
+	//'soloud'
 ];
 
 
